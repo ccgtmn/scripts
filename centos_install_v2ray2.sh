@@ -6,6 +6,9 @@ echo "#############################################################"
 echo "#         CentOS 7/8 v2ray 带伪装一键安装脚本               #"
 echo "# 网址: https://www.hijk.pw                                 #"
 echo "# 作者: hijk                                                #"
+echo "# 修改：ccgtmn                                              #"
+echo "# 修改内容：删除自动获取证书#"                               #"
+echo "# 自定义证书路径为/etc/nginx/ssl/                           #"
 echo "#############################################################"
 echo ""
 
@@ -196,17 +199,17 @@ function installNginx()
         echo -e " pip3安装失败，请到 ${red}https://www.hijk.pw${plain} 反馈"
         exit 1
     fi
-    pip3 install certbot
-    res=`which certbot`
-    if [ "$?" != "0" ]; then
-        export PATH=$PATH:/usr/local/bin
-    fi
-    certbot certonly --standalone --agree-tos --register-unsafely-without-email -d ${domain}
-    if [ "$?" != "0" ]; then
-        echo -e " 获取证书失败，请到 ${red}https://www.hijk.pw${plain} 反馈"
-        exit 1
-    fi
-
+#    pip3 install certbot
+#    res=`which certbot`
+#    if [ "$?" != "0" ]; then
+#        export PATH=$PATH:/usr/local/bin
+#    fi
+#    certbot certonly --standalone --agree-tos --register-unsafely-without-email -d ${domain}
+#    if [ "$?" != "0" ]; then
+#        echo -e " 获取证书失败，请到 ${red}https://www.hijk.pw${plain} 反馈"
+#        exit 1
+#    fi
+#
     if [ ! -f /etc/nginx/nginx.conf.bak ]; then
         mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
     fi
@@ -267,8 +270,8 @@ server {
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
     ssl_session_tickets off;
-    ssl_certificate /etc/letsencrypt/live/${domain}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${domain}/privkey.pem;
+    ssl_certificate /etc/nginx/ssl/1_${domain}_bundle.crt;
+    ssl_certificate_key /etc/nginx/ssl/2_${domain}.key;
 
     access_log  /var/log/nginx/${domain}.access.log;
     error_log /var/log/nginx/${domain}.error.log;
